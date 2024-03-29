@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id       String    @id @default(uuid())
+  email    String    @unique
+  name     String?
+  rankings Ranking[]
+}
+
+model Year {
+  year               Int       @id @unique
+  city               String
+  countryId          String
+  hostCountryId      String
+  rankings           Ranking[]
+  hostCountry        Country   @relation("YearHostCountry", fields: [hostCountryId], references: [id])
+  competingCountries Country[] @relation("YearCompetingCountries")
+}
+
+model Country {
+  id             String @id @unique
+  name           String
+  flag           String
+  acts           Act[]
+  hostingYears   Year[] @relation("YearHostCountry")
+  competingYears Year[] @relation("YearCompetingCountries")
+}
+
+model Act {
+  id        String    @id @default(uuid())
+  countryId String
+  artist    String
+  photo     String
+  song      String
+  country   Country   @relation(fields: [countryId], references: [id])
+  rankings  Ranking[] @relation("ActToRanking")
+}
+
+model Ranking {
+  id             String  @id @default(uuid())
+  userId         String?
+  yearId         Int?
+  potentialRanks Int[]
+  finalRank      Int?
+  user           User?   @relation(fields: [userId], references: [id])
+  year           Year?   @relation(fields: [yearId], references: [year])
+  acts           Act[]   @relation("ActToRanking")
+}
