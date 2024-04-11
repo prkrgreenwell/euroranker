@@ -1,18 +1,29 @@
-import { ActCard } from "@/components/ActCard";
-import prisma from "@/db";
-import Link from "next/link";
+"use client";
 
-// async function getActs() {
-//   const acts = await prisma.act.findMany({
-//     where: {
-//       yearId: 2023,
-//     },
-//   });
-
-//   return acts;
-// }
+import { useEffect, useState } from "react";
 
 export default async function Page() {
+  const [acts, setActs] = useState([]);
+
+  useEffect(() => {
+    async function fetchActs() {
+      try {
+        const response = await fetch("@/api/acts?year=2024/routes.ts");
+        if (response.ok) {
+          const data = await response.json();
+          setActs(data.data);
+          console.log(data.data);
+        } else {
+          console.error("Failed to fetch acts:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching acts:", error);
+      }
+    }
+
+    fetchActs();
+  }, []);
+
   return (
     <div className="flex flex-col justify-center items-center min-h-full">
       <div className="flex flex-col justify-center items-center w-full md:w-3/4">
