@@ -40,8 +40,8 @@ model Act {
   song      String
   country   Country   @relation(fields: [countryId], references: [id])
   rankings  Ranking[] @relation("ActToRanking")
-  year      Year?     @relation(fields: [yearId], references: [year])
-  yearId    Int?
+  year      Year      @relation(fields: [yearId], references: [year])
+  yearId    Int
 }
 
 model Ranking {
